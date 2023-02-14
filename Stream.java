@@ -5,10 +5,11 @@ class Employee{
     int id;
     String name;
     int age;
-    float salary;
+
+    Double salary;
     String department;
 
-    Employee(int id,String name,int age,float salary,String department){
+    Employee(int id,String name,int age,Double salary,String department){
         this.id = id;
         this.name = name;
         this.age = age;
@@ -48,11 +49,11 @@ class Employee{
         return department;
     }
 
-    public void setSalary(float salary){
+    public void setSalary(Double salary){
         this.salary = salary;
     }
 
-    public float getSalary(){
+    public Double getSalary(){
         return salary;
     }
 }
@@ -63,12 +64,12 @@ public class Stream {
 
         List<Employee> e_list = new ArrayList<Employee>();
 
-        e_list.add(new Employee(1,"A",20,20500f,"BUILD"));
-        e_list.add(new Employee(2,"B",30,40500f,"QA"));
-        e_list.add(new Employee(3,"C",35,35500f,"DEV"));
-        e_list.add(new Employee(4,"D",25,45500f,"BUILD"));
-        e_list.add(new Employee(5,"E",40,50500f,"DEV"));
-        e_list.add(new Employee(6,"F",33,30500f,"QA"));
+        e_list.add(new Employee(1,"A",20,20500d,"BUILD"));
+        e_list.add(new Employee(2,"B",30,40500d,"QA"));
+        e_list.add(new Employee(3,"C",35,35500d,"DEV"));
+        e_list.add(new Employee(4,"D",25,45500d,"BUILD"));
+        e_list.add(new Employee(5,"E",40,50500d,"DEV"));
+        e_list.add(new Employee(6,"F",33,30500d,"QA"));
 
         List<Employee> e_age_list = e_list.stream().filter(a -> a.age >= 25).collect(Collectors.toList());
 
@@ -98,15 +99,19 @@ public class Stream {
             }
 
             //Finding the average salary in each department
-            List<Float> salaries_dep = employees.stream().map(Employee::getSalary).toList();
+            List<Double> salaries_dep = employees.stream().map(Employee::getSalary).toList();
 
-            float average_salary = salaries_dep.stream().reduce((float) 0,(x, y) -> x + y) / employees.size();
+            Double average_salary = salaries_dep.stream().reduce((double) 0,(x, y) -> x + y) / employees.size();
 
             System.out.println("Average of the " + department + " employees: " + average_salary);
 
         });
 
+        Map<String, Double> high_avg_sal = e_list.stream().collect(Collectors.groupingBy(Employee::getDepartment,Collectors.averagingDouble(Employee::getSalary)));
 
+        Map.Entry<String, Double> high_avg_dep = high_avg_sal.entrySet().stream().max(Map.Entry.comparingByValue()).get();
+
+        System.out.println("The highest average salaried department is "  + high_avg_dep.getKey() + " with average " + high_avg_dep.getValue());
 
     }
 }
